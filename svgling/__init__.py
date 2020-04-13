@@ -1,15 +1,16 @@
-__all__ = ['core', 'figure', 'semantics', 'html', '__main__']
+from __future__ import absolute_import
+__all__ = [u'core', u'figure', u'semantics', u'html', u'__main__']
 
 __version_info__ = (0, 3, 0)
 __release__ = False
-__version__ = ".".join(str(i) for i in __version_info__)
+__version__ = u".".join(unicode(i) for i in __version_info__)
 
 import svgling.core
 
 draw_tree = svgling.core.draw_tree
 
 def disable_nltk_png():
-    """
+    u"""
     while SVG will take priority, Jupyter will still typically call the png
     renderer, which can have annoying consequences, because of its dependency on
     tk. On OS X, this leads to a blank, windowless app in the dock as long as

@@ -1,3 +1,5 @@
+from __future__ import division
+from __future__ import absolute_import
 import svgwrite
 import svgling.core
 from svgling.core import px
@@ -6,9 +8,9 @@ def svg_double_bracket(svg_parent, x, y, width, height):
     x2 = x + width
     y2 = y + height
     x_double = x + width / 2.0
-    opts = {"stroke_width": 1, "stroke": "black", "fill": "none"}
+    opts = {u"stroke_width": 1, u"stroke": u"black", u"fill": u"none"}
     if svgling.core.crisp_perpendiculars:
-        opts["shape_rendering"] = "crispEdges"
+        opts[u"shape_rendering"] = u"crispEdges"
     svg_parent.add(svgwrite.shapes.Polyline([(x2,y), (x,y), (x,y2), (x2,y2)],
         **opts))
     svg_parent.add(svgwrite.shapes.Line(start=(x_double,y), end=(x_double,y2),
@@ -26,7 +28,7 @@ class DoubleBrackets(object):
     def height(self):
         return self.content.height() + 4
 
-    def get_svg(self, name="figure"):
+    def get_svg(self, name=u"figure"):
         height = self.height()
         width = self.width()
         fig_height = self.content.height()
