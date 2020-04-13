@@ -2,7 +2,7 @@
 
 **Author**: Kyle Rawlins, [kgr@jhu.edu](kgr@jhu.edu)
 
-**Dependencies**: [`svgwrite`](https://pypi.org/project/svgwrite/), python 3
+**Dependencies**: [`svgwrite`](https://pypi.org/project/svgwrite/), Python 2.7
 
 **Repository**: [https://github.com/rawlins/svgling/](https://github.com/rawlins/svgling/)
 
