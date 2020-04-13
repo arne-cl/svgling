@@ -13,7 +13,7 @@ import enum, math
 
 def treelet_split_str(t):
     # treat strings as leaf nodes.
-    if isinstance(t, unicode):
+    if isinstance(t, basestring):
         return (t, tuple())
     else:
         return None
