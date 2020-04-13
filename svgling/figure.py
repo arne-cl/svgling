@@ -1,3 +1,5 @@
+from __future__ import division
+from __future__ import absolute_import
 import svgwrite
 import svgling.core
 from svgling.core import em, perc, px
@@ -15,18 +17,20 @@ from svgling.core import em, perc, px
 # a better solution, but I'm not currently sure what it is.
 def safe_get_style(s):
     try:
-        style = s["style"]
+        style = s[u"style"]
     except:
-        style = ""
+        style = u""
     return style
 
 def inherit_style(parent, child):
     style = safe_get_style(child)
     if len(style) > 0:
-        parent["style"] = style
+        parent[u"style"] = style
 
 class SideBySide(object):
-    def __init__(self, *args, padding=16):
+    def __init__(self, *args, **_3to2kwargs):
+        if 'padding' in _3to2kwargs: padding = _3to2kwargs['padding']; del _3to2kwargs['padding']
+        else: padding = 16
         self.elements = args
         self.svg_contents = [e.get_svg() for e in self.elements]
         self.widths = [e.width() for e in self.elements]
@@ -39,13 +43,13 @@ class SideBySide(object):
     def height(self):
         return max([e.height() for e in self.elements])
 
-    def get_svg(self, name="figure", debug=False):
+    def get_svg(self, name=u"figure", debug=False):
         # TODO: is there any problem embedding `Drawing`s within `Drawing`s?
         container = svgwrite.Drawing(name, (px(self.width()), px(self.height())))
         container.viewbox(minx=0, miny=0, width=self.width(), height=self.height())
         container.fit()
         x_pos = self.padding
-        for i in range(len(self.elements)):
+        for i in xrange(len(self.elements)):
             width = self.widths[i]
             box = svgwrite.container.SVG(x=x_pos,
                                          y=0,
@@ -53,9 +57,9 @@ class SideBySide(object):
                                          height=self.elements[i].height())
             box.add(self.svg_contents[i])
             if debug:
-                box.add(svgwrite.shapes.Rect(insert=("0%","0%"),
-                                                 size=("100%", "100%"),
-                                                 fill="none", stroke="red"))
+                box.add(svgwrite.shapes.Rect(insert=(u"0%",u"0%"),
+                                                 size=(u"100%", u"100%"),
+                                                 fill=u"none", stroke=u"red"))
             container.add(box)
             x_pos += width + self.padding
         return container
@@ -64,7 +68,11 @@ class SideBySide(object):
         return self.get_svg().tostring()
 
 class RowByRow(object):
-    def __init__(self, *args, padding=16, gridify=True):
+    def __init__(self, *args, **_3to2kwargs):
+        if 'gridify' in _3to2kwargs: gridify = _3to2kwargs['gridify']; del _3to2kwargs['gridify']
+        else: gridify = True
+        if 'padding' in _3to2kwargs: padding = _3to2kwargs['padding']; del _3to2kwargs['padding']
+        else: padding = 16
         self.elements = args
         self.padding = padding
         if gridify:
@@ -81,7 +89,7 @@ class RowByRow(object):
         for e in self.elements:
             if isinstance(e, SideBySide):
                 max_padding = max(max_padding, e.padding)
-                for j in range(len(e.elements)):
+                for j in xrange(len(e.elements)):
                     if j >= len(max_widths):
                         max_widths.extend([0])
                     max_widths[j] = max(max_widths[j], e.elements[j].width())
@@ -92,20 +100,20 @@ class RowByRow(object):
         for e in self.elements:
             if isinstance(e, SideBySide):
                 e.padding = max_padding
-                for j in range(len(e.elements)):
+                for j in xrange(len(e.elements)):
                     e.widths[j] = max_widths[j]
 
     def width(self):
         return max([e.width() for e in self.elements])
 
-    def get_svg(self, name="figure"):
+    def get_svg(self, name=u"figure"):
         # TODO: is there any problem embedding `Drawing`s within `Drawing`s?
         container = svgwrite.Drawing(name,
                                      (px(self.width()), px(self.height())))
         container.viewbox(minx=0, miny=0, width=self.width(), height=self.height())
         container.fit()
         y_pos = self.padding
-        for i in range(len(self.elements)):
+        for i in xrange(len(self.elements)):
             height = self.elements[i].height()
             box = svgwrite.container.SVG(x=0, y=y_pos,
                                          height=height,
@@ -120,7 +128,7 @@ class RowByRow(object):
         return self.get_svg().tostring()
 
 class Caption(object):
-    font_style = "font-family: times, serif; font-weight:normal; font-style: italic;"
+    font_style = u"font-family: times, serif; font-weight:normal; font-style: italic;"
     def __init__(self, fig, caption, font_size=13):
         self.fig = fig
         self.caption = caption
@@ -137,9 +145,9 @@ class Caption(object):
 
     def style_str(self):
         # TODO: generalize caption style
-        return self.font_style + " font-size: " + px(self.font_size) + ";"
+        return self.font_style + u" font-size: " + px(self.font_size) + u";"
 
-    def get_svg(self, name="figure", debug=False):
+    def get_svg(self, name=u"figure", debug=False):
         width = self.width()
         height = self.height()
         fig_width = self.fig.width()
@@ -149,16 +157,16 @@ class Caption(object):
         container.fit()
         y_pos = self.fig.height() + 0.5 * self.font_size
         caption_svg = svgwrite.text.Text(self.caption,
-                                         insert=("50%", "1em"),
-                                         text_anchor="middle",
+                                         insert=(u"50%", u"1em"),
+                                         text_anchor=u"middle",
                                          style = self.style_str())
         # this next is to keep any font style from impacting the interpretation
         # of ems in positioning the box.
-        caption_box = svgwrite.container.SVG(x=0, y=y_pos, width="100%", height="100%")
+        caption_box = svgwrite.container.SVG(x=0, y=y_pos, width=u"100%", height=u"100%")
         if debug:
-            caption_box.add(svgwrite.shapes.Rect(insert=("0%","0%"),
-                                                 size=("100%", "100%"),
-                                                 fill="none", stroke="red"))
+            caption_box.add(svgwrite.shapes.Rect(insert=(u"0%",u"0%"),
+                                                 size=(u"100%", u"100%"),
+                                                 fill=u"none", stroke=u"red"))
         caption_box.add(caption_svg)
         if (fig_width > caption_width):
             fig_x = 0
