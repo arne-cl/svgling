@@ -89,7 +89,10 @@ def leaf_iter(t):
     if len(children) == 0:
         yield parent
     for c in children:
-        yield from leaf_iter(c)
+        # Python 3: yield from leaf_iter(c)
+        # cf. https://stackoverflow.com/questions/17581332/converting-yield-from-statement-to-python-2-7-code
+        for leaf in leaf_iter(c):
+            yield leaf
 
 def common_parent(path1, path2):
     for i in xrange(min(len(path1), len(path2))):
