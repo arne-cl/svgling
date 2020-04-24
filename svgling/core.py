@@ -834,7 +834,6 @@ def draw_tree(*t, **opts):
     else: options = None
     u"""Return an object that implements SVG tree rendering, for display
     in a Jupyter notebook."""
-    from IPython.core.display import SVG
     if options is None:
         options = TreeOptions(**opts)
     if len(t) == 1:
