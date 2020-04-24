@@ -22,7 +22,7 @@ setup(name=u'svgling',
     url=u'https://github.com/rawlins/svgling',
     # svgwrite 1.3.1 is the last version to support Python 2
     install_requires=['svgwrite==1.3.1', 'pyparsing==2.4.7'],
-    python_requires=u'>=3',
+    python_requires=u'==2.7.*',
     packages=[u'svgling'],
     classifiers=[
         u"Development Status :: 4 - Beta",
